@@ -25,12 +25,20 @@ def runSim(geo,windowTime):
 
 #get initial location of nucleotide
 def getXY():
-     return [np.random.uniform(low=0,high=100),
-             np.random.uniform(low=0,high=100)]
+     return [np.random.uniform(low=-150,high=150),
+             np.random.uniform(low=-150,high=150)]
+
+
+def inGeo(coor,geo):
+    return
+
 
 #calculate exectation time for trial
 def calcExpectationTime(coor,geo,windowTime):
-    dist = distanceFromEnt(coor,geo)
+    if inGeo(coor,geo):
+        dist = 0
+    else:
+        dist = distanceFromEnt(coor,geo)
     geoFac = getGeometricFactor(coor,geo)
     expTime = geoFac*windowTime
     return
@@ -38,8 +46,7 @@ def calcExpectationTime(coor,geo,windowTime):
 #distance from channel enterance
 #assume pushed -y
 def distanceFromEnt(coor,geo):
-	x, y = coor
-
+    x, y = coor
     return
 
 def getGeometricFactor(coor,geo):
