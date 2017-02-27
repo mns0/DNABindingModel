@@ -1,5 +1,27 @@
 import numpy as np
 from multiprocessing import pool
+import matplotlib.pyplot as plt
+from matplotlib.path import Path
+import matplotlib.patches as mpatches
+import math
+import operator
+import random
+
+##globaly define path ##
+t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/20)
+x1 = 30*np.exp(0.14*t)*np.cos(t) - 9
+y1 = 30*np.exp(0.14*t)*np.sin(t) + 15
+x2 = 18*np.exp(0.15*t)*np.cos(t) - 7
+y2 = 18*np.exp(0.15*t)*np.sin(t) + 12
+xx = np.hstack((x2,x1[::-1]))
+yy = np.hstack((y2,y1[::-1]))
+z1 = zip(xx,yy)
+codes = np.ones(len(xx))*Path.LINETO
+codes[0] = Path.MOVETO
+codes[-1] = Path.STOP
+structPath = Path(z1,codes)
+##########################
+
 
 #initialization statement
 def initStatement(trials,geo,windowTime):
@@ -14,14 +36,14 @@ def initStatement(trials,geo,windowTime):
 def runSimulations(trials,geo,windowTime):
     stats = []
     for trial in np.arange(trials):
-        runSim(geo,windowTime)
+        stats.append(runSim(geo,windowTime))
     return stats
 
 #run single simulation
 def runSim(geo,windowTime):
     coor = getXY()
-    calcExpectationTime(coor,geo,windowTime);
-    return
+    #calcExpectationTimeM1(coor,geo,windowTime);
+    return calcExpectationTimeM1(windowTime)
 
 #get initial location of nucleotide
 def getXY():
@@ -30,24 +52,47 @@ def getXY():
 
 
 def inGeo(coor,geo):
-    return
+    global structPath
+    return structPath.contains_points([coor])
 
 
 #calculate exectation time for trial
-def calcExpectationTime(coor,geo,windowTime):
+def calcExpectationTimeM1(coor,geo,windowTime):
+    distanceFromEnt(coor,geo)
     if inGeo(coor,geo):
         dist = 0
     else:
-        dist = distanceFromEnt(coor,geo)
+        #dist = distanceFromEnt(coor,geo)
+        dist = 1
     geoFac = getGeometricFactor(coor,geo)
-    expTime = geoFac*windowTime
-    return
+    expTime = 0 #geoFac*windowTime
+    return 0
 
-#distance from channel enterance
-#assume pushed -y
+#random guessing of time
+def calcExpectationTimeM2(windowTime):
+    #probability of landing in spiral
+    extArea = 1.0 - 20470.0/33676
+    AddTime = 0
+    skipTime = 0
+    if (random.random() < extArea):
+        AddTime = 500
+    if (random.randint(1,10) == 1 ):
+        skipTime = 500
+    geoFactor = random.randint(1,10)
+    print( geoFactor*windowTime + AddTime, math.exp(-16)  )
+    return geoFactor*windowTime + AddTime
+
+#distance from channel
+#assume pushed -x
 def distanceFromEnt(coor,geo):
-    x, y = coor
-    return
+    global x1, y1
+    points = zip(x1,y1)
+    distArr = []
+    for x,y in points:
+        distArr.append(math.sqrt((x-coor[0])**2 + (y-coor[1])**2))
+    min_index, min_value = min(enumerate(distArr), key=operator.itemgetter(1))
+    print(min_index,min_value)
+    return ( min_index,min_value)
 
 def getGeometricFactor(coor,geo):
     return
@@ -55,7 +100,6 @@ def getGeometricFactor(coor,geo):
 #analyze the data
 def analyzeData(data):
     return
-
 
 def initSim(trials,geo,windowTime):
     initStatement(trials,geo,windowTime)
