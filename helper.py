@@ -33,16 +33,16 @@ def initStatement(trials,geo,windowTime):
     print('#####################')
 
 #run the simulations
-def runSimulations(trials,geo,windowTime):
+def runSimulations(trials,geo,windowTime,prob):
     stats = []
     for trial in np.arange(trials):
-        stats.append(runSim(geo,windowTime))
+        stats.append(runSim(geo,windowTime,prob))
     return stats
 
 #run single simulation
-def runSim(geo,windowTime):
+def runSim(geo,windowTime,prob):
     coor = getXY()
-    return calcExpectationTimeM1(coor,geo,windowTime);
+    return calcExpectationTimeM1(coor,geo,windowTime,prob);
 
 
 #get initial location of nucleotide
@@ -57,7 +57,7 @@ def inGeo(coor,geo):
 
 
 #calculate exectation time for trial
-def calcExpectationTimeM1(coor,geo,windowTime):
+def calcExpectationTimeM1(coor,geo,windowTime,prob):
     entDist = distanceFromEnt(coor,geo)
     pen = 0
     if inGeo(coor,geo):
@@ -67,7 +67,8 @@ def calcExpectationTimeM1(coor,geo,windowTime):
         pen = windowTime
         #print(idx,dist)
     geoFac = getGeometricFactor(coor,geo,entDist)
-    expTime =  geoFac*windowTime+pen
+    skipP = skipCalculation(geoFac,coor,entDist,windowTime,prob)
+    expTime =  geoFac*windowTime+pen+skipP
     return expTime
 
 #random guessing of time
@@ -133,3 +134,13 @@ def analyzeData(data):
 
 def initSim(trials,geo,windowTime):
     initStatement(trials,geo,windowTime)
+
+#determines the penelty of skipping for the trial
+def skipCalculation(geoFac,coor,entDist,windowTime,prob):
+    skipTime =0
+    for i in range(int(geoFac)):
+        m = 95.0/100.0
+        r = random.random()
+        if  m < random.random():
+            skipTime = 3*windowTime*random.randint(1,10)
+    return skipTime
