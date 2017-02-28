@@ -7,7 +7,7 @@ import helper as hp
 
 def inSpiral(coor):
     xp,yp = coor
-    t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/20)
+    t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/30)
     x1 = 30*np.exp(0.14*t)*np.cos(t) - 9
     y1 = 30*np.exp(0.14*t)*np.sin(t) + 15
     x2 = 18*np.exp(0.15*t)*np.cos(t) - 7
@@ -20,7 +20,7 @@ def inSpiral(coor):
 def drawSpiral(coor):
     fig, ax = plt.subplots()
     x,y = coor
-    t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/20)
+    t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/30)
     x1 = 30*np.exp(0.14*t)*np.cos(t) - 9
     y1 = 30*np.exp(0.14*t)*np.sin(t) + 15
     x2 = 18*np.exp(0.15*t)*np.cos(t) - 7

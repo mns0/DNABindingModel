@@ -8,7 +8,7 @@ import operator
 import random
 
 ##globaly define path ##
-t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/20)
+t = np.arange(-0.3*np.pi,3.9*np.pi,np.pi/30)
 x1 = 30*np.exp(0.14*t)*np.cos(t) - 9
 y1 = 30*np.exp(0.14*t)*np.sin(t) + 15
 x2 = 18*np.exp(0.15*t)*np.cos(t) - 7
@@ -96,8 +96,9 @@ def distanceFromEnt(coor,geo):
 
 def distanceFromEnt2(coor,geo):
     global x1, y1
-    vals =   (y1 <= coor[1]+3) & (y1 >= coor[1]-3)
-    idx = np.where(vals)
+    vals =   (y1 <= coor[1]+4) & (y1 >= coor[1]-4)
+    idx = np.ravel(np.where(vals))
+    print(len(idx),idx)
     if len(idx) > 1:
         idx = getSmallestIndex(coor,idx)
     print(x1[idx],idx)
@@ -109,10 +110,10 @@ def getSmallestIndex(coor,idx):
     minArray = 0
     minDist = 9999
     for i in idx:
-        if cov[0] > x1[i]:
-            dist = cov[0] - x1[i]
+        if coor[0] > x1[i]:
+            dist = coor[0] - x1[i]
         else:
-            dist = cov[0]+150 + (150 - x1[i])
+            dist = coor[0]+150 + (150 - x1[i])
         if dist < minDist:
             minDist = dist
             minArray = i
