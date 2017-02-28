@@ -36,12 +36,15 @@ def drawSpiral(coor):
     path1 = Path(z1,codes)
     patch1 = mpatches.PathPatch(path1, facecolor='r', alpha=0.5)
     ax.add_patch(patch1)
-    if path1.contains_points([coor]):
-        txt = "in geo"
-    else:
-        txt = "not in geo"
-    plt.text(100, 100,txt, color='green', fontsize=15)
     min_index, xxx = hp.distanceFromEnt(coor,None)
+    hp.distanceFromEnt2(coor,None)
+    dist = hp.getGeometricFactor(coor,0,(min_index,xxx))
+    if path1.contains_points([coor]):
+        txt = "in geo " + str(dist)
+    else:
+        txt = "not in geo " + str(dist)
+    plt.text(100, 100,txt, color='green', fontsize=15)
     plt.scatter(x1[min_index],y1[min_index],s=100,color='k')
+    plt.scatter(coor[0],y1[min_index],s=100,color='k')
     plt.show()
 

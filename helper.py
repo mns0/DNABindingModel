@@ -42,8 +42,8 @@ def runSimulations(trials,geo,windowTime):
 #run single simulation
 def runSim(geo,windowTime):
     coor = getXY()
-    #calcExpectationTimeM1(coor,geo,windowTime);
-    return calcExpectationTimeM1(windowTime)
+    calcExpectationTimeM1(coor,geo,windowTime);
+    return
 
 #get initial location of nucleotide
 def getXY():
@@ -58,13 +58,13 @@ def inGeo(coor,geo):
 
 #calculate exectation time for trial
 def calcExpectationTimeM1(coor,geo,windowTime):
-    distanceFromEnt(coor,geo)
+    entDist = distanceFromEnt(coor,geo)
     if inGeo(coor,geo):
         dist = 0
     else:
         #dist = distanceFromEnt(coor,geo)
         dist = 1
-    geoFac = getGeometricFactor(coor,geo)
+    geoFac = getGeometricFactor(coor,geo,entDist)
     expTime = 0 #geoFac*windowTime
     return 0
 
@@ -79,7 +79,7 @@ def calcExpectationTimeM2(windowTime):
     if (random.randint(1,10) == 1 ):
         skipTime = 500
     geoFactor = random.randint(1,10)
-    print( geoFactor*windowTime + AddTime, math.exp(-16)  )
+    #print( geoFactor*windowTime + AddTime, math.exp(-16)  )
     return geoFactor*windowTime + AddTime
 
 #distance from channel
@@ -91,11 +91,38 @@ def distanceFromEnt(coor,geo):
     for x,y in points:
         distArr.append(math.sqrt((x-coor[0])**2 + (y-coor[1])**2))
     min_index, min_value = min(enumerate(distArr), key=operator.itemgetter(1))
-    print(min_index,min_value)
+    #print(min_index,min_value)
     return ( min_index,min_value)
 
-def getGeometricFactor(coor,geo):
-    return
+def distanceFromEnt2(coor,geo):
+    global x1, y1
+    vals =   (y1 <= coor[1]+3) & (y1 >= coor[1]-3)
+    idx = np.where(vals)
+    if len(idx) > 1:
+        idx = getSmallestIndex(coor,idx)
+    print(x1[idx],idx)
+    return (idx, None)
+
+#calculate minimum distance such that
+def getSmallestIndex(coor,idx):
+    global x1, y1
+    minArray = 0
+    minDist = 9999
+    for i in idx:
+        if cov[0] > x1[i]:
+            dist = cov[0] - x1[i]
+        else:
+            dist = cov[0]+150 + (150 - x1[i])
+        if dist < minDist:
+            minDist = dist
+            minArray = i
+    return minArray
+
+
+def getGeometricFactor(coor,geo,entDist):
+    global x1, y1, t
+    x = t[entDist[0]]/(np.pi/2)  + 1
+    return x
 
 #analyze the data
 def analyzeData(data):

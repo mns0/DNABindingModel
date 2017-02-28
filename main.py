@@ -17,8 +17,8 @@ def main():
     if runSim:
         hp.initSim(trials,geom,windowTime)
         data = hp.runSimulations(trials,geom,windowTime)
-        plt.hist(data)
-        plt.show()
-        hp.analyzeData(data)
+        #plt.hist(data)
+        #plt.show()
+        #hp.analyzeData(data)
 
 main()
