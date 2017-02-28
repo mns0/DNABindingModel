@@ -42,8 +42,8 @@ def runSimulations(trials,geo,windowTime):
 #run single simulation
 def runSim(geo,windowTime):
     coor = getXY()
-    calcExpectationTimeM1(coor,geo,windowTime);
-    return
+    return calcExpectationTimeM1(coor,geo,windowTime);
+
 
 #get initial location of nucleotide
 def getXY():
@@ -59,14 +59,16 @@ def inGeo(coor,geo):
 #calculate exectation time for trial
 def calcExpectationTimeM1(coor,geo,windowTime):
     entDist = distanceFromEnt(coor,geo)
+    pen = 0
     if inGeo(coor,geo):
         dist = 0
     else:
-        #dist = distanceFromEnt(coor,geo)
-        dist = 1
+        #idx, dist = distanceFromEnt2(coor,geo)
+        pen = windowTime
+        #print(idx,dist)
     geoFac = getGeometricFactor(coor,geo,entDist)
-    expTime = 0 #geoFac*windowTime
-    return 0
+    expTime =  geoFac*windowTime+pen
+    return expTime
 
 #random guessing of time
 def calcExpectationTimeM2(windowTime):
@@ -96,13 +98,13 @@ def distanceFromEnt(coor,geo):
 
 def distanceFromEnt2(coor,geo):
     global x1, y1
-    vals =   (y1 <= coor[1]+4) & (y1 >= coor[1]-4)
+    minDist = 0
+    vals =   (y1 <= coor[1]+5) & (y1 >= coor[1]-5)
     idx = np.ravel(np.where(vals))
     print(len(idx),idx)
     if len(idx) > 1:
-        idx = getSmallestIndex(coor,idx)
-    print(x1[idx],idx)
-    return (idx, None)
+        idx, minDist = getSmallestIndex(coor,idx)
+    return (idx, minDist)
 
 #calculate minimum distance such that
 def getSmallestIndex(coor,idx):
@@ -113,11 +115,11 @@ def getSmallestIndex(coor,idx):
         if coor[0] > x1[i]:
             dist = coor[0] - x1[i]
         else:
-            dist = coor[0]+150 + (150 - x1[i])
+            dist = coor[0] + 150 + (150 - x1[i])
         if dist < minDist:
             minDist = dist
             minArray = i
-    return minArray
+    return (minArray, minDist)
 
 
 def getGeometricFactor(coor,geo,entDist):
