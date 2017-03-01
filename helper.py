@@ -58,15 +58,15 @@ def inGeo(coor,geo):
 
 #calculate exectation time for trial
 def calcExpectationTimeM1(coor,geo,windowTime,prob):
-    entDist = distanceFromEnt(coor,geo)
     pen = 0
+    entDist = distanceFromEnt(coor,geo)
+    geoFac = getGeometricFactor(coor,geo,entDist)
     if inGeo(coor,geo):
         dist = 0
     else:
         #idx, dist = distanceFromEnt2(coor,geo)
         pen = windowTime
         #print(idx,dist)
-    geoFac = getGeometricFactor(coor,geo,entDist)
     skipP = skipCalculation(geoFac,coor,entDist,windowTime,prob)
     expTime =  geoFac*windowTime+pen+skipP
     return expTime

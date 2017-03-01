@@ -9,8 +9,8 @@ import matplotlib.patches as mpatches
 
 #model of nucleotde translocation into a graphene nanopore with various geometry pores
 def main():
-    runSim = True
-    #geo.drawSpiral(hp.getXY())
+    runSim = False
+    geo.drawSpiral(hp.getXY())
     skipProb = 22
     trials = 50000
     geom='spiral'
