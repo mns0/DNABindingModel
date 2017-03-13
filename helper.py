@@ -142,5 +142,10 @@ def skipCalculation(geoFac,coor,entDist,windowTime,prob):
         m = 95.0/100.0
         r = random.random()
         if  m < random.random():
+            d = getNewGeoFactor(geoFac)
             skipTime = 3*windowTime*random.randint(1,10)
     return skipTime
+
+
+def getNewGeoFactor(geoFac):
+    return geoFac + 4
