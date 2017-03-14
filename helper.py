@@ -27,9 +27,9 @@ structPath = Path(z1,codes)
 def initStatement(trials,geo,windowTime):
     print('#####################')
     print('# Running simulation#')
-    print('# trials: ' + str() +'      #')
-    print('# geometry: ' + str() + '    #')
-    print('# Window Time: ' + str() + '    #')
+    print('# trials: ' + str(trials) +'      #')
+    print('# geometry: ' + str(geo) + '    #')
+    print('# Window Time: ' + str(windowTime) + '    #')
     print('#####################')
 
 #run the simulations
@@ -56,7 +56,8 @@ def inGeo(coor,geo):
     return structPath.contains_points([coor])
 
 
-#calculate exectation time for trial
+#calculate exectation time for trials
+# entTime = time takes to enter into the pore
 def calcExpectationTimeM1(coor,geo,windowTime,prob):
     pen = 0
     entDist = distanceFromEnt(coor,geo)
@@ -66,24 +67,12 @@ def calcExpectationTimeM1(coor,geo,windowTime,prob):
     else:
         #idx, dist = distanceFromEnt2(coor,geo)
         pen = windowTime
+        #entTime = enteranceTime(coor,geo,windowTime)
         #print(idx,dist)
     skipP = skipCalculation(geoFac,coor,entDist,windowTime,prob)
+    print(entDist,geoFac,skipP,prob)
     expTime =  geoFac*windowTime+pen+skipP
     return expTime
-
-#random guessing of time
-def calcExpectationTimeM2(windowTime):
-    #probability of landing in spiral
-    extArea = 1.0 - 20470.0/33676
-    AddTime = 0
-    skipTime = 0
-    if (random.random() < extArea):
-        AddTime = 500
-    if (random.randint(1,10) == 1 ):
-        skipTime = 500
-    geoFactor = random.randint(1,10)
-    #print( geoFactor*windowTime + AddTime, math.exp(-16)  )
-    return geoFactor*windowTime + AddTime
 
 #distance from channel
 #assume pushed -x
@@ -95,8 +84,9 @@ def distanceFromEnt(coor,geo):
         distArr.append(math.sqrt((x-coor[0])**2 + (y-coor[1])**2))
     min_index, min_value = min(enumerate(distArr), key=operator.itemgetter(1))
     #print(min_index,min_value)
-    return ( min_index,min_value)
+    return (min_index,min_value)
 
+#assumed pushed -X
 def distanceFromEnt2(coor,geo):
     global x1, y1
     minDist = 0
@@ -106,6 +96,15 @@ def distanceFromEnt2(coor,geo):
     if len(idx) > 1:
         idx, minDist = getSmallestIndex(coor,idx)
     return (idx, minDist)
+
+
+
+#calculate enterance time into the structure
+#assume velocity here
+def entTime(coor,geo,windowTime):
+    distFromEnt = distanceFromEnt2(coor,geo)
+    vel = 1.0 #nm/ns
+    return time
 
 #calculate minimum distance such that
 def getSmallestIndex(coor,idx):
@@ -146,6 +145,19 @@ def skipCalculation(geoFac,coor,entDist,windowTime,prob):
             skipTime = 3*windowTime*random.randint(1,10)
     return skipTime
 
-
 def getNewGeoFactor(geoFac):
     return geoFac + 4
+
+#random guessing of time
+def calcExpectationTimeM2(windowTime):
+    #probability of landing in spiral
+    extArea = 1.0 - 20470.0/33676
+    AddTime = 0
+    skipTime = 0
+    if (random.random() < extArea):
+        AddTime = 500
+    if (random.randint(1,10) == 1 ):
+        skipTime = 500
+    geoFactor = random.randint(1,10)
+    #print( geoFactor*windowTime + AddTime, math.exp(-16)  )
+    return geoFactor*windowTime + AddTime

@@ -26,7 +26,7 @@ def drawSpiral(coor):
     x2 = 18*np.exp(0.15*t)*np.cos(t) - 7
     y2 = 18*np.exp(0.15*t)*np.sin(t) + 12
     plt.plot(x1,y1,x2,y2)
-    plt.scatter(x,y,s=100)
+    plt.scatter(x,y,s=100,marker="v")
     xx = np.hstack((x2,x1[::-1]))
     yy = np.hstack((y2,y1[::-1]))
     z1 = zip(xx,yy)
@@ -36,15 +36,13 @@ def drawSpiral(coor):
     path1 = Path(z1,codes)
     patch1 = mpatches.PathPatch(path1, facecolor='r', alpha=0.5)
     ax.add_patch(patch1)
-    min_index, xxx = hp.distanceFromEnt(coor,None)
-    hp.distanceFromEnt2(coor,None)
-    dist = hp.getGeometricFactor(coor,0,(min_index,xxx))
+    min_index2, xxx = hp.distanceFromEnt2(coor,None)
+    dist = hp.getGeometricFactor(coor,0,(min_index2,xxx))
     if path1.contains_points([coor]):
-        txt = "in geo " + str(dist)
+        txt = "in geo " + str(dist) + " "  + str(xxx)
     else:
-        txt = "not in geo " + str(dist)
+        txt = "not in geo " + str(dist) + " "  + str(xxx)
     plt.text(100, 100,txt, color='green', fontsize=15)
-    plt.scatter(x1[min_index],y1[min_index],s=100,color='k')
-    plt.scatter(coor[0],y1[min_index],s=100,color='k')
+    plt.scatter(x1[min_index2],y1[min_index2],s=100,color='k')
     plt.show()
 
