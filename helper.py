@@ -24,25 +24,26 @@ structPath = Path(z1,codes)
 
 
 #initialization statement
-def initStatement(trials,geo,windowTime):
+def initStatement(trials,geo,windowTime,vel):
     print('#####################')
     print('# Running simulation#')
     print('# trials: ' + str(trials) +'      #')
     print('# geometry: ' + str(geo) + '    #')
     print('# Window Time: ' + str(windowTime) + '    #')
+    print('# Velocity: ' + str(vel) + '    #')
     print('#####################')
 
 #run the simulations
-def runSimulations(trials,geo,windowTime,prob):
+def runSimulations(trials,geo,windowTime,prob,vel):
     stats = []
     for trial in np.arange(trials):
-        stats.append(runSim(geo,windowTime,prob))
+        stats.append(runSim(geo,windowTime,prob,vel))
     return stats
 
 #run single simulation
-def runSim(geo,windowTime,prob):
+def runSim(geo,windowTime,prob,vel):
     coor = getXY()
-    return calcExpectationTimeM1(coor,geo,windowTime,prob);
+    return calcExpectationTimeM1(coor,geo,windowTime,prob,vel);
 
 
 #get initial location of nucleotide
@@ -58,20 +59,21 @@ def inGeo(coor,geo):
 
 #calculate exectation time for trials
 # entTime = time takes to enter into the pore
-def calcExpectationTimeM1(coor,geo,windowTime,prob):
+def calcExpectationTimeM1(coor,geo,windowTime,prob,vel):
     pen = 0
     entDist = distanceFromEnt(coor,geo)
     geoFac = getGeometricFactor(coor,geo,entDist)
+    entTime = 0
     if inGeo(coor,geo):
         dist = 0
     else:
         #idx, dist = distanceFromEnt2(coor,geo)
         pen = windowTime
-        #entTime = enteranceTime(coor,geo,windowTime)
+        entTime = entTime(coor,geo,windowTime,vel)
         #print(idx,dist)
     skipP = skipCalculation(geoFac,coor,entDist,windowTime,prob)
     print(entDist,geoFac,skipP,prob)
-    expTime =  geoFac*windowTime+pen+skipP
+    expTime =  geoFac*windowTime+entTime
     return expTime
 
 #distance from channel
@@ -97,14 +99,14 @@ def distanceFromEnt2(coor,geo):
         idx, minDist = getSmallestIndex(coor,idx)
     return (idx, minDist)
 
-
-
 #calculate enterance time into the structure
 #assume velocity here
-def entTime(coor,geo,windowTime):
+def entTime(coor,geo,windowTime,vel):
     distFromEnt = distanceFromEnt2(coor,geo)
-    vel = 1.0 #nm/ns
-    return time
+    travelDist = vel*windowTime
+    if travelDist < distFromEnt:
+        x = 0
+    return windowTime
 
 #calculate minimum distance such that
 def getSmallestIndex(coor,idx):
@@ -131,8 +133,8 @@ def getGeometricFactor(coor,geo,entDist):
 def analyzeData(data):
     return
 
-def initSim(trials,geo,windowTime):
-    initStatement(trials,geo,windowTime)
+def initSim(trials,geo,windowTime,vel):
+    initStatement(trials,geo,windowTime,vel)
 
 #determines the penelty of skipping for the trial
 def skipCalculation(geoFac,coor,entDist,windowTime,prob):
