@@ -29,7 +29,7 @@ def initStatement(trials,geo,windowTime,vel):
     print('# Running simulation#')
     print('# trials: ' + str(trials) +'      #')
     print('# geometry: ' + str(geo) + '    #')
-    print('# Window Time: ' + str(windowTime) + '    #')
+    print('# Window Time: ' + str(windowTime) + ' ps    #')
     print('# Velocity: ' + str(vel) + '    #')
     print('#####################')
 
@@ -63,17 +63,16 @@ def calcExpectationTimeM1(coor,geo,windowTime,prob,vel):
     pen = 0
     entDist = distanceFromEnt(coor,geo)
     geoFac = getGeometricFactor(coor,geo,entDist)
-    entTime = 0
-    if inGeo(coor,geo):
+    timeEnt = 0
+    if inGeo(coor,geo) and coor != None:
         dist = 0
     else:
         #idx, dist = distanceFromEnt2(coor,geo)
         pen = windowTime
-        entTime = entTime(coor,geo,windowTime,vel)
+        timeEnt = entTime(coor,geo,windowTime,vel)
         #print(idx,dist)
-    skipP = skipCalculation(geoFac,coor,entDist,windowTime,prob)
-    print(entDist,geoFac,skipP,prob)
-    expTime =  geoFac*windowTime+entTime
+    skipTime  = skipCalculation(geoFac,geo,windowTime,prob)
+    expTime =  geoFac*windowTime+timeEnt + skipTime
     return expTime
 
 #distance from channel
@@ -94,7 +93,6 @@ def distanceFromEnt2(coor,geo):
     minDist = 0
     vals =   (y1 <= coor[1]+5) & (y1 >= coor[1]-5)
     idx = np.ravel(np.where(vals))
-    print(len(idx),idx)
     if len(idx) > 1:
         idx, minDist = getSmallestIndex(coor,idx)
     return (idx, minDist)
@@ -137,18 +135,29 @@ def initSim(trials,geo,windowTime,vel):
     initStatement(trials,geo,windowTime,vel)
 
 #determines the penelty of skipping for the trial
-def skipCalculation(geoFac,coor,entDist,windowTime,prob):
-    skipTime =0
+def skipCalculation(geoFac,geo,windowTime,prob):
+    skipTime = 0
+    skipSeg  = 0
     for i in range(int(geoFac)):
-        m = 95.0/100.0
-        r = random.random()
-        if  m < random.random():
+        m = 95
+        r = random.randint(0,100)
+        #print(geoFac,m,r,i)
+        if  m < r:
+            #print("~~~~~~~~~~~~~~~~~~~~~~~")
             d = getNewGeoFactor(geoFac)
-            skipTime = 3*windowTime*random.randint(1,10)
+            skipTime = getSkipTime(4,geo,windowTime,prob)
     return skipTime
 
 def getNewGeoFactor(geoFac):
+   # if geoFac >= 6:
+   #     return None
     return geoFac + 4
+
+
+def getSkipTime(geoFac,geo,windowTime,prob):
+    skipTime  = skipCalculation(geoFac,geo,windowTime,prob)
+    expTime   = geoFac*windowTime+ skipTime
+    return expTime
 
 #random guessing of time
 def calcExpectationTimeM2(windowTime):
