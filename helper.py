@@ -125,6 +125,8 @@ def getSmallestIndex(coor,idx):
 def getGeometricFactor(coor,geo,entDist):
     global x1, y1, t
     x = t[entDist[0]]/(np.pi/2)  + 1
+    y = t[entDist[0]]/(np.pi/2)  + 1
+    print('~~~~~~~~~~~~~~~~~~ ' + str(y))
     return x
 
 #analyze the data
