@@ -59,8 +59,13 @@ def inGeo(coor,geo):
 
 #calculate exectation time for trials
 # entTime = time takes to enter into the pore
+# general model:
+# expectation Time =
+#      geometricFactor*windowTime
+#   +  skipping penalty
+#   +  time to entry
 def calcExpectationTimeM1(coor,geo,windowTime,prob,vel):
-    pen = 0
+    pen = 0 #penalty
     entDist = distanceFromEnt(coor,geo)
     geoFac = getGeometricFactor(coor,geo,entDist)
     timeEnt = 0
@@ -102,6 +107,8 @@ def distanceFromEnt2(coor,geo):
 def entTime(coor,geo,windowTime,vel):
     distFromEnt = distanceFromEnt2(coor,geo)
     travelDist = vel*windowTime
+    print('This is the distance from the ent: '+ str(distFromEnt))
+    print('This is the travel distance       : '+ str(travelDist))
     if travelDist < distFromEnt:
         x = 0
     return windowTime
@@ -126,7 +133,7 @@ def getGeometricFactor(coor,geo,entDist):
     global x1, y1, t
     x = t[entDist[0]]/(np.pi/2)  + 1
     y = t[entDist[0]]/(np.pi/2)  + 1
-    print('~~~~~~~~~~~~~~~~~~ ' + str(y))
+    #print('~~~~~~~~~~~~~~~~~~ ' + str(y))
     return x
 
 #analyze the data
@@ -141,11 +148,9 @@ def skipCalculation(geoFac,geo,windowTime,prob):
     skipTime = 0
     skipSeg  = 0
     for i in range(int(geoFac)):
-        m = 95
+        m = 99
         r = random.randint(0,100)
-        #print(geoFac,m,r,i)
         if  m < r:
-            #print("~~~~~~~~~~~~~~~~~~~~~~~")
             d = getNewGeoFactor(geoFac)
             skipTime = getSkipTime(4,geo,windowTime,prob)
     return skipTime
